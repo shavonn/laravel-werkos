@@ -18,7 +18,7 @@ class WorkOsProviderAuthUrlRequest extends FormRequest
     {
         $workOsAuthorizationUrl = LaravelWerkOs::userManager()->getAuthorizationUrl(
             state: ['state' => $state = Str::random(20)],
-            provider: $this->string('provider'),
+            provider: $this->provider,
         );
 
         $this->session()->put('state', $state);
