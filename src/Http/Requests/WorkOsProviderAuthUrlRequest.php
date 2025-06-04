@@ -10,6 +10,8 @@ use WorkOS\Exception\UnexpectedValueException;
 
 class WorkOsProviderAuthUrlRequest extends FormRequest
 {
+    protected string $provider;
+
     /**
      * @throws ConfigurationException
      * @throws UnexpectedValueException
