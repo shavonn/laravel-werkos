@@ -32,7 +32,7 @@ WorkOS creds in `services.php`.
 If you are just adding WorkOS, you can publish and run this migration:
 
 ```bash
-    php artisan vendor:publish --tag="laravel-werkos-migrations"
+    php artisan vendor:publish --tag="werkos-migrations"
     php artisan migrate
 ```
 
@@ -43,7 +43,7 @@ drop the `password` column if you don't need to migrate users.
 You can publish the config file with:
 
 ```bash
-    php artisan vendor:publish --tag="laravel-werkos-config"
+    php artisan vendor:publish --tag="werkos-config"
 ```
 
 ## Usage
