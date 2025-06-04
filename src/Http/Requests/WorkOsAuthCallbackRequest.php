@@ -11,7 +11,7 @@ use Sb\LaravelWerkos\LaravelWerkos;
 use WorkOS\Exception\WorkOSException;
 use WorkOS\Resource\AuthenticationResponse;
 
-class WorkOsAuthUrlCallbackRequest extends WorkOsAuthFormRequest
+class WorkOsAuthCallbackRequest extends WorkOsAuthFormRequest
 {
     /**
      * @throws WorkOSException
