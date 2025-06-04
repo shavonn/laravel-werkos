@@ -20,25 +20,49 @@ You can install the package via composer:
   composer require shavonn/laravel-werkos
 ```
 
-WorkOS creds in `services.php`.
+### Provided WorkOS Creds
+
+Add service in `services.php`. Add env var keys to your `.env` file.
 
 ```php
     'workos' => [
         'client_id' => env('WORKOS_CLIENT_ID'),
         'secret' => env('WORKOS_API_KEY'),
+        'redirect_url' => env('WORKOS_REDIRECT_URL'),
+        'logout_redirect_url' => env('WORKOS_LOGOUT_REDIRECT_URL'),
     ],
 ```
 
-If you are just adding WorkOS, you can publish and run this migration:
+### Migrate (if needed)
+
+The migration is for cases where WorkOS columns are not already added to the `users` table.
+
+The migration:
+
+- Adds the `workos_id` and `avatar` columns to the `users` table
+- Drops the `password` column from the `users` table
 
 ```bash
     php artisan vendor:publish --tag="werkos-migrations"
     php artisan migrate
 ```
 
-It will add the `workos_id` and `avatar` columns to the `users` table and set the `password` column to nullable. You can
-also
-drop the `password` column if you don't need to migrate users.
+For existing applications not previously using WorkOS, you can alter the password column instead until you complete
+migrating your users. Modify the migration.
+
+Up:
+
+```php
+$table->string('password')->nullable()->change();
+```
+
+Down:
+
+```php
+$table->string('password')->nullable(false)->change();
+````
+
+### WerkOs Config
 
 You can publish the config file with:
 
