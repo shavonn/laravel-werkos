@@ -101,17 +101,19 @@ I created these Laravel Form Requests to handle auth types and manage the local 
 
 #### WorkOsAuthFormRequest
 
-`WorkOsAuthFormRequest` is an abstract with an `attempt` method which calls two other methods on form requests that
-extend
-it-- `authenticate` and `handleMissingLocalUser`, so you can use it create and customize your own auth methods and
-session management. When successful, `attempt` will return a user. Else, it will throw an error.
+An abstract for WorkOS authentication request that calls `authenticate` and `handleMissingLocalUser` methods defined on
+the Auth form requests that extend it, so it can be used to create and customize handling.
 
-In a controller:
+To use the extending auth request, call the `attempt` method.  
+When successful, `attempt` will return a user. Else, it will throw an error.
+
+In controller:
 
 ```php
 public function authMe(WorkOsPasswordAuthRequest $request) {
-    $request->attempt();
+    $user $request->attempt();
     // handle the success or failure however you like
+    return // whatever your return...
 }
 ```
 
@@ -119,24 +121,26 @@ Current list of existing requests and what they handle:
 
 #### WorkOsPasswordAuthRequest
 
-- Contains basic email and password validation.
-- Wrapped in the Laravel login rate limiting logic (untested).
-- Authenticates email and password with WorkOS `authenticateWithPassword` and passes in `ipAddress`, and `userAgent`
+- Validates email and password with basic validation.
+- Uses Laravel's normal login rate limiting logic (untested in this context).
+- Authenticates with `email`, `password`, `ipAddress`, and `userAgent` using WorkOS `authenticateWithPassword`.
   args.
 
 #### WorkOsProviderAuthUrlRequest
 
-- Gets an authorization Url for a provider with `getAuthorizationUrl`, expects `provider` (provider ID from WorkOS docs)
-  as a url param. `auth/{provider}/gimme-url` or
-  however you like.
-- Creates a state val, sends it in url request, and stores it in the Laravel session for later verification.
+- Generates a random string as `state`
+- Gets authorization url with `provider` and generated `state` using WorkOS `getAuthorizationUrl`.
+- The form request expects `provider` as a url param. Ex `auth/{provider}/gimme-url`.
+    - `provider`: provider ID from WorkOS (authkit, GoogleOAuth, etc)
+- Stores the `state` value in the Laravel session for later verification.
 
-#### WorkOsAuthUrlCallbackRequest
+#### WorkOsAuthCallbackRequest
 
-- This request handles the callback from interacting with an authorization url.
-- It will retrieve the `code` and `state` value from the url query string as provided by WorkOS.
-- It will authenticate with `authenticateWithCode`, using `code`, `ipAddress`, and `userAgent` args.
-- Can create new user if local Laravel user not found. Configuration for this in this package's config file.
+- Handles the callback from interacting with an authorization url.
+- Retrieves `code` and `state` from the url as query values, as provided by WorkOS.
+- Authenticates with `code`, `ipAddress`, and `userAgent` using `authenticateWithCode`.
+- Can create new user when Laravel user not found.
+    - Configuration in werkos config. Default is `true`. `workos.provider_auth.create_missing_user`
     - If enabled, a user will be created, Registered event fired, and user authenticated.
 
 ### Utils
