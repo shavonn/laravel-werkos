@@ -9,9 +9,6 @@ class LaravelWerkosServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package
-            ->name('laravel-werkos')
-            ->hasConfigFile()
-            ->hasMigration('create_laravel_werkos_table');
+        $package->name('laravel-werkos')->hasConfigFile()->hasMigration('update_users_table_for_workos');
     }
 }
