@@ -4,12 +4,12 @@ namespace Sb\LaravelWerkos\Http\Requests;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Log;
 use JsonException;
-use Sb\LaravelWerkos\DTO\WorkOsUser;
 use Sb\LaravelWerkos\LaravelWerkos;
 use WorkOS\Exception\WorkOSException;
 use WorkOS\Resource\AuthenticationResponse;
+use WorkOS\Resource\User as WorkOsUser;
 
 class WorkOsAuthCallbackRequest extends WorkOsAuthFormRequest
 {
@@ -17,7 +17,7 @@ class WorkOsAuthCallbackRequest extends WorkOsAuthFormRequest
      * @throws WorkOSException
      * @throws JsonException
      */
-    public function authenticate(): AuthenticationResponse
+    protected function authenticate(): AuthenticationResponse
     {
         $this->ensureStateIsValid();
 
@@ -30,8 +30,9 @@ class WorkOsAuthCallbackRequest extends WorkOsAuthFormRequest
 
     protected function handleMissingLocalUser(WorkOsUser $workOsUser): ?Authenticatable
     {
-        if (config('workos.provider_auth.create_missing_user')) {
-            $newUser = app(User::class)->create([
+        if (config('werkos.provider_auth.create_missing_user')) {
+            $userClass = config('werkos.user_class');
+            $newUser = app($userClass)->create([
                 'name' => $workOsUser->firstName.' '.$workOsUser->lastName,
                 'email' => $workOsUser->email,
                 'email_verified_at' => now(),
@@ -56,6 +57,7 @@ class WorkOsAuthCallbackRequest extends WorkOsAuthFormRequest
         $state = $decodedJSON['state'] ?? false;
 
         if ($state !== $this->session()->get('state')) {
+            Log::info('WorkOsAuthCallbackRequest: state is invalid', ['state' => $state, 'session_state' => $this->session()->get('state')]);
             abort(403);
         }
 

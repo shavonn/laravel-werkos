@@ -5,11 +5,12 @@ namespace Sb\LaravelWerkos\Http\Requests;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Sb\LaravelWerkOs\DTO\WorkOsUser;
+use WorkOS\Resource\AuthenticationResponse;
+use WorkOS\Resource\User as WorkOsUser;
 
 abstract class WorkOsAuthFormRequest extends FormRequest
 {
-    public function attempt()
+    public function attempt(): array
     {
         $authResponse = $this->authenticate();
 
@@ -27,15 +28,10 @@ abstract class WorkOsAuthFormRequest extends FormRequest
 
         Auth::guard('web')->login($user);
 
-        $this->session()->put('workos_access_token', $workOsAccessToken);
-        $this->session()->put('workos_refresh_token', $workOsRefreshToken);
-
-        $this->session()->regenerate();
-
-        return $user;
+        return ['user' => $user,  'access_token' => $workOsAccessToken, 'refresh_token' => $workOsRefreshToken];
     }
 
-    abstract public function authenticate();
+    abstract protected function authenticate(): AuthenticationResponse;
 
     abstract protected function handleMissingLocalUser(WorkOsUser $workOsUser);
 }

@@ -7,17 +7,17 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Sb\LaravelWerkos\DTO\WorkOsUser;
 use Sb\LaravelWerkos\LaravelWerkos;
 use WorkOS\Exception\WorkOSException;
 use WorkOS\Resource\AuthenticationResponse;
+use WorkOS\Resource\User as WorkOsUser;
 
 class WorkOsPasswordAuthRequest extends WorkOsAuthFormRequest
 {
     /**
      * @throws WorkOSException
      */
-    public function authenticate(): AuthenticationResponse
+    protected function authenticate(): AuthenticationResponse
     {
         $this->ensureIsNotRateLimited();
 

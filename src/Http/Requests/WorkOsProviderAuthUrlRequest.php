@@ -10,17 +10,16 @@ use WorkOS\Exception\UnexpectedValueException;
 
 class WorkOsProviderAuthUrlRequest extends FormRequest
 {
-    protected string $provider;
-
     /**
      * @throws ConfigurationException
      * @throws UnexpectedValueException
      */
-    public function getAuthorizationUrl(): string
+    public function getAuthorizationUrl(string $provider): string
     {
+        $state = Str::random(20);
         $workOsAuthorizationUrl = LaravelWerkOs::userManager()->getAuthorizationUrl(
-            state: ['state' => $state = Str::random(20)],
-            provider: $this->provider,
+            state: ['state' => $state],
+            provider: $provider,
         );
 
         $this->session()->put('state', $state);

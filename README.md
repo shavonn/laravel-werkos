@@ -157,9 +157,10 @@ Current list of existing requests and what they handle:
 
 - Add other auth methods
     - SSO
-    - support organizations
-    - add caching where useful
-    - create auth request stubs for publishing
+    - Support organizations
+    - Add caching where useful
+    - Create auth request stubs for publishing
+    - Custom informative errors
 
 ## Testing
 
